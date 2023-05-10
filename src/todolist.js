@@ -1,23 +1,25 @@
 import React, { Component } from 'react';
-import { act } from 'react-dom/test-utils';
 import { connect } from 'react-redux';
+import { getActionAddItem, getActionChangeInputValue, getActionDeleteItem } from './store/actionCreators';
 
 class TodoList extends Component {
     constructor(props) {
         super(props);
     }
     render() {
+        const { inputValue, changeInputValue, HandleClick, HandleDelete } = this.props;
+
         return (
             <div>
                 <div>
-                    <input value={this.props.inputValue} onChange={this.props.changeInputValue} />
-                    <button onClick={this.props.HandleClick}> 提交</button>
+                    <input value={inputValue} onChange={changeInputValue} />
+                    <button onClick={HandleClick}> 提交</button>
                 </div>
                 <ul>
                     {
                         this.props.list.map((item, index) => {
                             return (
-                                <li key={index} onClick={this.props.HandleDelete.bind(this, index)}>{item}</li>
+                                <li key={index} onClick={HandleDelete.bind(this, index)}>{item}</li>
                             )
                         })
                     }
@@ -27,6 +29,7 @@ class TodoList extends Component {
     }
 
 }
+
 // mapStateToProps
 const mapStateToProps = (state) => {
     return {
@@ -39,24 +42,15 @@ const mapStateToProps = (state) => {
 const mapDispatchToProps = (dispatch) => {
     return {
         changeInputValue(e) {
-            console.log(e.target.value)
-            const action = {
-                type: 'change_input_value',
-                value: e.target.value
-            }
+            const action = getActionChangeInputValue(e.target.value)
             dispatch(action)
         },
         HandleClick() {
-            const action = {
-                type: "add_item"
-            }
+            const action = getActionAddItem()
             dispatch(action)
         },
         HandleDelete(index) {
-            const action = {
-                type: "delete_item",
-                value: index
-            }
+            const action = getActionDeleteItem(index)
             dispatch(action)
         }
     }
