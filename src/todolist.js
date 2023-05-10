@@ -1,66 +1,65 @@
-import React, { Component } from "react";
-import store from './store';
-import { getInputChangeAction, getAddTodoItemAction, getDeleteItemAction, initListAction, getInitList } from "./store/actionCreators";
-import TodoListUI from "./TodoListUI";
-import axios from "axios";
+import React, { Component } from 'react';
+import { act } from 'react-dom/test-utils';
+import { connect } from 'react-redux';
 
-class Todolist extends Component {
+class TodoList extends Component {
     constructor(props) {
-        super(props)
-        this.state = store.getState()
-        this.handleBtnClick = this.handleBtnClick.bind(this)
-        this.handleInputChange = this.handleInputChange.bind(this)
-        this.handleStoreChange = this.handleStoreChange.bind(this)
-        this.handleDeleteItemClick = this.handleDeleteItemClick.bind(this)
-        store.subscribe(this.handleStoreChange)
-
+        super(props);
     }
-
     render() {
         return (
-            <TodoListUI inputVal={this.state.inputVal}
-                handleInputChange={this.handleInputChange}
-                handleBtnClick={this.handleBtnClick}
-                list={this.state.list}
-                handleDeleteItemClick={this.handleDeleteItemClick}
-            />
+            <div>
+                <div>
+                    <input value={this.props.inputValue} onChange={this.props.changeInputValue} />
+                    <button onClick={this.props.HandleClick}> 提交</button>
+                </div>
+                <ul>
+                    {
+                        this.props.list.map((item, index) => {
+                            return (
+                                <li key={index} onClick={this.props.HandleDelete.bind(this, index)}>{item}</li>
+                            )
+                        })
+                    }
+                </ul>
+            </div>
         )
     }
 
-    componentDidMount() {
-        const action = getInitList()
-        store.dispatch(action)
-        // axios.get('http://127.0.0.1:4523/m1/2674321-0-default/api/todolist.json').then((res) => {
-        //     const data = res.data;
-        //     const action = initListAction(data)
-        //     store.dispatch(action)
-        // })
-    }
-    handleInputChange(e) {
-        const val = e.target.value
-
-        const action = getInputChangeAction(val)
-        store.dispatch(action);
-        this.setState(() => {
-            return {
-                inputVal: e.target.value
-            }
-        })
-    }
-
-    handleBtnClick(e) {
-        const action = getAddTodoItemAction()
-        store.dispatch(action)
-    }
-
-    handleStoreChange() {
-        this.setState(store.getState())
-    }
-
-    handleDeleteItemClick(index) {
-        const action = getDeleteItemAction(index)
-        store.dispatch(action)
+}
+// mapStateToProps
+const mapStateToProps = (state) => {
+    return {
+        inputValue: state.inputValue,
+        list: state.list
     }
 }
 
-export default Todolist;
+//dispatch 指的就是 store.dispatch 
+const mapDispatchToProps = (dispatch) => {
+    return {
+        changeInputValue(e) {
+            console.log(e.target.value)
+            const action = {
+                type: 'change_input_value',
+                value: e.target.value
+            }
+            dispatch(action)
+        },
+        HandleClick() {
+            const action = {
+                type: "add_item"
+            }
+            dispatch(action)
+        },
+        HandleDelete(index) {
+            const action = {
+                type: "delete_item",
+                value: index
+            }
+            dispatch(action)
+        }
+    }
+}
+// 让todolist组件和store做关联， store里面的数据映 射到组件的props里面
+export default connect(mapStateToProps, mapDispatchToProps)(TodoList);
