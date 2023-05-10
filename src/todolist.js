@@ -2,33 +2,54 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getActionAddItem, getActionChangeInputValue, getActionDeleteItem } from './store/actionCreators';
 
-class TodoList extends Component {
-    constructor(props) {
-        super(props);
-    }
-    render() {
-        const { inputValue, changeInputValue, HandleClick, HandleDelete } = this.props;
-
-        return (
+// 这是一个UI组件， 可以写无状态组件
+const TodoList = (props) => {
+    const { inputValue, changeInputValue, HandleClick, HandleDelete, list } = props;
+    return (
+        <div>
             <div>
-                <div>
-                    <input value={inputValue} onChange={changeInputValue} />
-                    <button onClick={HandleClick}> 提交</button>
-                </div>
-                <ul>
-                    {
-                        this.props.list.map((item, index) => {
-                            return (
-                                <li key={index} onClick={HandleDelete.bind(this, index)}>{item}</li>
-                            )
-                        })
-                    }
-                </ul>
+                <input value={inputValue} onChange={changeInputValue} />
+                <button onClick={HandleClick}> 提交</button>
             </div>
-        )
-    }
-
+            <ul>
+                {
+                    list.map((item, index) => {
+                        return (
+                            <li key={index} onClick={HandleDelete.bind(this, index)}>{item}</li>
+                        )
+                    })
+                }
+            </ul>
+        </div>
+    )
 }
+
+// class TodoList extends Component {
+//     constructor(props) {
+//         super(props);
+//     }
+//     render() {
+//         const { inputValue, changeInputValue, HandleClick, HandleDelete } = this.props;
+//         return (
+//             <div>
+//                 <div>
+//                     <input value={inputValue} onChange={changeInputValue} />
+//                     <button onClick={HandleClick}> 提交</button>
+//                 </div>
+//                 <ul>
+//                     {
+//                         this.props.list.map((item, index) => {
+//                             return (
+//                                 <li key={index} onClick={HandleDelete.bind(this, index)}>{item}</li>
+//                             )
+//                         })
+//                     }
+//                 </ul>
+//             </div>
+//         )
+//     }
+
+// }
 
 // mapStateToProps
 const mapStateToProps = (state) => {
